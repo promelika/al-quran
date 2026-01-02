@@ -13,7 +13,10 @@ const Home = () => {
     const [showReciterModal, setShowReciterModal] = useState(false);
     const [showScriptModal, setShowScriptModal] = useState(false);
 
+
+
     const [loading, setLoading] = useState(true);
+    const [learnedVerses, setLearnedVerses] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,7 +31,23 @@ const Home = () => {
             setLoading(false);
         };
         fetchData();
+
+        // Load learned verses
+        const stored = localStorage.getItem('learnedVerses');
+        if (stored) {
+            setLearnedVerses(JSON.parse(stored));
+        }
     }, []);
+
+    const getProgress = (surahNumber, totalVerses) => {
+        let learnedCount = 0;
+        for (let i = 1; i <= totalVerses; i++) {
+            if (learnedVerses[`${surahNumber}:${i}`]) {
+                learnedCount++;
+            }
+        }
+        return (learnedCount / totalVerses) * 100;
+    };
 
     const handleReciterSelect = (identifier) => {
         setSelectedReciter(identifier);
@@ -151,10 +170,29 @@ const Home = () => {
                                 <p className="surah-verse-count">{surah.numberOfAyahs} Verses</p>
                             </div>
                         </div>
+
+                        <div className="progress-bar-container" style={{
+                            marginTop: '1rem',
+                            width: '100%',
+                            height: '3px',
+                            backgroundColor: 'var(--color-border)',
+                            borderRadius: '2px',
+                            overflow: 'hidden'
+                        }}>
+                            <div
+                                className="progress-bar-fill"
+                                style={{
+                                    width: `${getProgress(surah.number, surah.numberOfAyahs)}%`,
+                                    height: '100%',
+                                    backgroundColor: 'var(--color-primary)',
+                                    transition: 'width 0.3s'
+                                }}
+                            ></div>
+                        </div>
                     </Link>
                 ))}
             </div>
-        </div>
+        </div >
     );
 };
 

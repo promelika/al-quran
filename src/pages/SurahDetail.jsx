@@ -17,6 +17,11 @@ const SurahDetail = () => {
     // State for Surah repetition
     const [surahRepetitionTarget, setSurahRepetitionTarget] = useState(1);
     const [surahRepetitionCurrent, setSurahRepetitionCurrent] = useState(1);
+    const [ayahRepetitionTarget, setAyahRepetitionTarget] = useState(1);
+
+    const [playbackSpeed, setPlaybackSpeed] = useState(1);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [learnedVerses, setLearnedVerses] = useState({});
 
     // Refs
     const audioRef = useRef(new Audio());
@@ -46,7 +51,32 @@ const SurahDetail = () => {
             setSurahRepetitionCurrent(1);
             setSurahRepetitionTarget(1);
         };
+        return () => {
+            audioRef.current.pause();
+            setPlayingAudio(null);
+            setIsPlayingAll(false);
+            currentRepetition.current = 1;
+            setRepetitionProgress(1);
+            setSurahRepetitionCurrent(1);
+            setSurahRepetitionTarget(1);
+        };
     }, [number]);
+
+    // Load learned verses from local storage
+    useEffect(() => {
+        const stored = localStorage.getItem('learnedVerses');
+        if (stored) {
+            setLearnedVerses(JSON.parse(stored));
+        }
+    }, []);
+
+    // Toggle learned status
+    const toggleLearned = (verseNumber) => {
+        const key = `${number}:${verseNumber}`;
+        const newLearned = { ...learnedVerses, [key]: !learnedVerses[key] };
+        setLearnedVerses(newLearned);
+        localStorage.setItem('learnedVerses', JSON.stringify(newLearned));
+    };
 
     // Handle Play/Pause for individual verse
     const handlePlay = (audioUrl) => {
@@ -103,7 +133,9 @@ const SurahDetail = () => {
         const handleEnded = () => {
             if (!playingAudio) return;
 
-            const targetCount = repetitionCounts[playingAudio] || 1;
+            const targetCount = isPlayingAll
+                ? ayahRepetitionTarget
+                : (repetitionCounts[playingAudio] || 1);
 
             if (currentRepetition.current < targetCount) {
                 // Repeat same verse
@@ -165,6 +197,30 @@ const SurahDetail = () => {
         }
     }, [playingAudio]);
 
+    // Playback Speed Effect
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.playbackRate = playbackSpeed;
+        }
+    }, [playbackSpeed, playingAudio]);
+
+    // Scroll Detection Effect
+    useEffect(() => {
+        const handleScroll = () => {
+            const offset = window.scrollY;
+            if (offset > 100) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
     // Helper to generate options 1-99
     const repetitionOptions = Array.from({ length: 99 }, (_, i) => i + 1);
 
@@ -173,46 +229,99 @@ const SurahDetail = () => {
 
     return (
         <div className="surah-detail-container">
-            <div className="detail-header">
+            <div className={`detail-header ${isScrolled ? 'scrolled' : ''}`}>
                 <Link to="/" className="back-link">← Back to Surahs</Link>
                 <div className="header-content">
                     <h1 className="detail-title">{surah.name}</h1>
                     <p className="detail-subtitle">{surah.englishName} • {surah.numberOfAyahs} Verses</p>
 
-                    <div className="play-all-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '1.5rem' }}>
-                        <div className="surah-controls" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div className="play-all-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', marginTop: '1rem' }}>
+                        <div className="surah-controls" style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.75rem',
+                            flexWrap: 'wrap',
+                            justifyContent: 'center',
+                            background: 'var(--color-bg)',
+                            padding: '0.5rem',
+                            borderRadius: '50px',
+                            border: '1px solid var(--color-border)'
+                        }}>
                             <button
                                 className={`play-all-button ${isPlayingAll ? 'active' : ''}`}
                                 onClick={handlePlayAll}
+                                style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
                             >
-                                {isPlayingAll ? '❚❚ Pause Recitation' : '▶ Play Full Surah'}
+                                {isPlayingAll ? '❚❚ Pause' : '▶ Play All'}
                             </button>
 
-                            <div className="surah-repetition-control" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span style={{ fontSize: '0.9rem', color: 'var(--color-text-light)' }}>Repeat Surah:</span>
+                            <div className="control-divider" style={{ width: '1px', height: '20px', background: 'var(--color-border)' }}></div>
+
+                            <div className="surah-repetition-control" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', border: 'none', padding: 0, background: 'none' }}>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-light)' }}>Ayah:</span>
                                 <select
                                     className="repetition-select"
-                                    style={{ width: 'auto' }}
+                                    style={{ width: 'auto', padding: '0.2rem', fontSize: '0.8rem' }}
+                                    value={ayahRepetitionTarget}
+                                    onChange={(e) => setAyahRepetitionTarget(parseInt(e.target.value))}
+                                >
+                                    <option value={1}>1x</option>
+                                    <option value={2}>2x</option>
+                                    <option value={3}>3x</option>
+                                    <option value={4}>4x</option>
+                                    <option value={5}>5x</option>
+                                    <option value={10}>10x</option>
+                                </select>
+                            </div>
+
+                            <div className="surah-repetition-control" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', border: 'none', padding: 0, background: 'none' }}>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-light)' }}>Surah:</span>
+                                <select
+                                    className="repetition-select"
+                                    style={{ width: 'auto', padding: '0.2rem', fontSize: '0.8rem' }}
                                     value={surahRepetitionTarget}
                                     onChange={(e) => setSurahRepetitionTarget(parseInt(e.target.value))}
                                 >
-                                    {repetitionOptions.map(num => (
-                                        <option key={num} value={num}>x{num}</option>
-                                    ))}
+                                    <option value={1}>1x</option>
+                                    <option value={2}>2x</option>
+                                    <option value={3}>3x</option>
+                                    <option value={4}>4x</option>
+                                    <option value={5}>5x</option>
+                                    <option value={10}>Loop</option>
+                                </select>
+                            </div>
+
+                            <div className="control-divider" style={{ width: '1px', height: '20px', background: 'var(--color-border)' }}></div>
+
+                            <div className="playback-speed-control" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-light)' }}>Speed:</span>
+                                <select
+                                    className="repetition-select"
+                                    style={{ width: 'auto', padding: '0.2rem', fontSize: '0.8rem' }}
+                                    value={playbackSpeed}
+                                    onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
+                                >
+                                    <option value={0.5}>0.5x</option>
+                                    <option value={0.75}>0.75x</option>
+                                    <option value={1}>1x</option>
+                                    <option value={1.25}>1.25x</option>
+                                    <option value={1.5}>1.5x</option>
+                                    <option value={2}>2x</option>
                                 </select>
                             </div>
                         </div>
 
-                        {isPlayingAll && surahRepetitionTarget > 1 && (
+                        {isPlayingAll && (surahRepetitionTarget > 1 || ayahRepetitionTarget > 1) && (
                             <div className="surah-repetition-status" style={{
                                 color: 'var(--color-primary)',
                                 fontWeight: '600',
-                                backgroundColor: 'var(--color-primary-light)',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '20px',
-                                fontSize: '0.9rem'
+                                fontSize: '0.8rem',
+                                display: 'flex',
+                                gap: '1rem',
+                                marginTop: '-0.25rem'
                             }}>
-                                Surah Loop: {surahRepetitionCurrent} / {surahRepetitionTarget}
+                                {surahRepetitionTarget > 1 && <span>Surah: {surahRepetitionCurrent}/{surahRepetitionTarget}</span>}
+                                {ayahRepetitionTarget > 1 && <span>Ayah: {repetitionProgress}/{ayahRepetitionTarget}</span>}
                             </div>
                         )}
                     </div>
@@ -239,6 +348,35 @@ const SurahDetail = () => {
                                 >
                                     {playingAudio === verse.audio ? '❚❚' : '▶'}
                                 </button>
+
+                                <div
+                                    className="learned-checkbox-container"
+                                    onClick={(e) => { e.stopPropagation(); toggleLearned(verse.numberInSurah); }}
+                                    title="Mark as learned"
+                                    style={{
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginTop: '0.25rem'
+                                    }}
+                                >
+                                    <div style={{
+                                        width: '20px',
+                                        height: '20px',
+                                        borderRadius: '4px',
+                                        border: '1px solid #000',
+                                        backgroundColor: learnedVerses[`${surah.number}:${verse.numberInSurah}`] ? 'var(--color-primary)' : 'transparent',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        transition: 'all 0.2s'
+                                    }}>
+                                        {learnedVerses[`${surah.number}:${verse.numberInSurah}`] && (
+                                            <span style={{ color: 'white', fontSize: '14px', lineHeight: 1 }}>✓</span>
+                                        )}
+                                    </div>
+                                </div>
 
                                 <select
                                     className="repetition-select"
