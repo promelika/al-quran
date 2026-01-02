@@ -149,48 +149,60 @@ const Home = () => {
             )}
 
             <div className="surah-grid">
-                {surahs.map((surah) => (
-                    <Link
-                        to={`/surah/${surah.number}`}
-                        key={surah.number}
-                        className="surah-card"
-                    >
-                        <div className="surah-card-header">
-                            <div className="surah-info-left">
-                                <div className="surah-number">
-                                    {surah.number}
-                                </div>
-                                <div>
-                                    <h3 className="surah-english-name">{surah.englishName}</h3>
-                                    <p className="surah-english-translation">{surah.englishNameTranslation}</p>
-                                </div>
-                            </div>
-                            <div className="surah-info-right">
-                                <span className="surah-arabic-name">{surah.name}</span>
-                                <p className="surah-verse-count">{surah.numberOfAyahs} Verses</p>
-                            </div>
-                        </div>
+                {surahs.map((surah) => {
+                    const progress = getProgress(surah.number, surah.numberOfAyahs);
+                    const isCompleted = progress === 100;
 
-                        <div className="progress-bar-container" style={{
-                            marginTop: '1rem',
-                            width: '100%',
-                            height: '3px',
-                            backgroundColor: 'var(--color-border)',
-                            borderRadius: '2px',
-                            overflow: 'hidden'
-                        }}>
-                            <div
-                                className="progress-bar-fill"
-                                style={{
-                                    width: `${getProgress(surah.number, surah.numberOfAyahs)}%`,
-                                    height: '100%',
-                                    backgroundColor: 'var(--color-primary)',
-                                    transition: 'width 0.3s'
-                                }}
-                            ></div>
-                        </div>
-                    </Link>
-                ))}
+                    return (
+                        <Link
+                            to={`/surah/${surah.number}`}
+                            key={surah.number}
+                            className={`surah-card ${isCompleted ? 'completed' : ''}`}
+                            style={{
+                                backgroundColor: isCompleted ? 'var(--color-primary-light)' : 'var(--color-card)',
+                                borderColor: isCompleted ? 'var(--color-primary)' : 'var(--color-border)'
+                            }}
+                        >
+                            <div className="surah-card-header">
+                                <div className="surah-info-left">
+                                    <div className="surah-number" style={{
+                                        backgroundColor: isCompleted ? 'var(--color-primary)' : 'var(--color-primary-light)',
+                                        color: isCompleted ? 'white' : 'var(--color-primary)'
+                                    }}>
+                                        {surah.number}
+                                    </div>
+                                    <div>
+                                        <h3 className="surah-english-name">{surah.englishName}</h3>
+                                        <p className="surah-english-translation">{surah.englishNameTranslation}</p>
+                                    </div>
+                                </div>
+                                <div className="surah-info-right">
+                                    <span className="surah-arabic-name">{surah.name}</span>
+                                    <p className="surah-verse-count">{surah.numberOfAyahs} Verses</p>
+                                </div>
+                            </div>
+
+                            <div className="progress-bar-container" style={{
+                                marginTop: '1rem',
+                                width: '100%',
+                                height: '3px',
+                                backgroundColor: isCompleted ? 'rgba(16, 185, 129, 0.2)' : 'var(--color-border)',
+                                borderRadius: '2px',
+                                overflow: 'hidden'
+                            }}>
+                                <div
+                                    className="progress-bar-fill"
+                                    style={{
+                                        width: `${progress}%`,
+                                        height: '100%',
+                                        backgroundColor: 'var(--color-primary)',
+                                        transition: 'width 0.3s'
+                                    }}
+                                ></div>
+                            </div>
+                        </Link>
+                    );
+                })}
             </div>
         </div >
     );

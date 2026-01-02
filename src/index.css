@@ -606,3 +606,64 @@ a {
   background-color: var(--color-primary);
   border-radius: 2px;
 }
+
+/* Recording Controls */
+.record-button,
+.stop-button,
+.play-recording-button,
+.delete-recording-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.record-button:hover {
+  background-color: #fca5a5;
+  border-color: #ef4444;
+}
+
+.stop-button {
+  background-color: #ef4444;
+  color: white;
+  border-color: #ef4444;
+  animation: pulse 1.5s infinite;
+}
+
+.play-recording-button {
+  background-color: #e0f2fe;
+  color: #0284c7;
+  border-color: #0ea5e9;
+}
+
+.play-recording-button:hover {
+  background-color: #0ea5e9;
+  color: white;
+}
+
+.delete-recording-button:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}

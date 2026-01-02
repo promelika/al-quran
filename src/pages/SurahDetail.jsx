@@ -23,7 +23,13 @@ const SurahDetail = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [learnedVerses, setLearnedVerses] = useState({});
 
+    // Recording State
+    const [recordingVerse, setRecordingVerse] = useState(null);
+    const [recordedAudio, setRecordedAudio] = useState({}); // { verseId: blobUrl }
+
     // Refs
+    const mediaRecorderRef = useRef(null);
+    const audioChunksRef = useRef([]);
     const audioRef = useRef(new Audio());
     const activeVerseRef = useRef(null);
     const verseRefs = useRef({});
@@ -76,6 +82,54 @@ const SurahDetail = () => {
         const newLearned = { ...learnedVerses, [key]: !learnedVerses[key] };
         setLearnedVerses(newLearned);
         localStorage.setItem('learnedVerses', JSON.stringify(newLearned));
+        localStorage.setItem('learnedVerses', JSON.stringify(newLearned));
+    };
+
+    // Recording Functions
+    const startRecording = async (verseKey) => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorderRef.current = new MediaRecorder(stream);
+            audioChunksRef.current = [];
+
+            mediaRecorderRef.current.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunksRef.current.push(event.data);
+                }
+            };
+
+            mediaRecorderRef.current.onstop = () => {
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                setRecordedAudio(prev => ({ ...prev, [verseKey]: audioUrl }));
+
+                // Stop all tracks to release microphone
+                stream.getTracks().forEach(track => track.stop());
+            };
+
+            mediaRecorderRef.current.start();
+            setRecordingVerse(verseKey);
+        } catch (error) {
+            console.error("Error accessing microphone:", error);
+            alert("Could not access microphone. Please allow permissions.");
+        }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && recordingVerse) {
+            mediaRecorderRef.current.stop();
+            setRecordingVerse(null);
+        }
+    };
+
+    const deleteRecording = (verseKey) => {
+        setRecordedAudio(prev => {
+            const newState = { ...prev };
+            // Optional: revoke object URL to free memory if needed, though React might handle it or it's negligible for short clips
+            // URL.revokeObjectURL(newState[verseKey]); 
+            delete newState[verseKey];
+            return newState;
+        });
     };
 
     // Handle Play/Pause for individual verse
@@ -376,6 +430,51 @@ const SurahDetail = () => {
                                             <span style={{ color: 'white', fontSize: '14px', lineHeight: 1 }}>✓</span>
                                         )}
                                     </div>
+                                </div>
+
+                                <div className="recording-controls" style={{ display: 'flex', gap: '0.25rem', marginTop: '0.25rem', justifyContent: 'center' }}>
+                                    {!recordingVerse && !recordedAudio[`${surah.number}:${verse.numberInSurah}`] && (
+                                        <button
+                                            className="record-button"
+                                            onClick={(e) => { e.stopPropagation(); startRecording(`${surah.number}:${verse.numberInSurah}`); }}
+                                            title="Record your recitation"
+                                        >
+                                            🎤
+                                        </button>
+                                    )}
+
+                                    {recordingVerse === `${surah.number}:${verse.numberInSurah}` && (
+                                        <button
+                                            className="stop-button"
+                                            onClick={(e) => { e.stopPropagation(); stopRecording(); }}
+                                            title="Stop recording"
+                                        >
+                                            ⏹
+                                        </button>
+                                    )}
+
+                                    {recordedAudio[`${surah.number}:${verse.numberInSurah}`] && (
+                                        <>
+                                            <button
+                                                className="play-recording-button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    const audio = new Audio(recordedAudio[`${surah.number}:${verse.numberInSurah}`]);
+                                                    audio.play();
+                                                }}
+                                                title="Play your recording"
+                                            >
+                                                👤▶
+                                            </button>
+                                            <button
+                                                className="delete-recording-button"
+                                                onClick={(e) => { e.stopPropagation(); deleteRecording(`${surah.number}:${verse.numberInSurah}`); }}
+                                                title="Delete recording"
+                                            >
+                                                🗑
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
 
                                 <select
