@@ -1,0 +1,565 @@
+/* Global CSS Reset & Variables */
+:root {
+  --color-primary: #10B981;
+  /* Emerald 500 */
+  --color-primary-light: #ecfdf5;
+  /* Emerald 50 */
+  --color-secondary: #F59E0B;
+  /* Amber 500 */
+  --color-bg: #F8FAFC;
+  /* Slate 50 */
+  --color-card: #ffffff;
+  --color-text: #1E293B;
+  /* Slate 800 */
+  --color-text-light: #64748b;
+  /* Slate 500 */
+  --color-border: #e2e8f0;
+  /* Slate 200 */
+  --font-arabic: 'Amiri', serif;
+  --font-latin: 'Inter', sans-serif;
+  --spacing-container: 2rem;
+  --width-container: 1200px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-latin);
+  background-color: var(--color-bg);
+  background-image: url('/islamic-bg.png');
+  background-size: 400px;
+  background-repeat: repeat;
+  background-attachment: fixed;
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Layout */
+.app-container {
+  min-height: 100vh;
+}
+
+.home-container,
+.surah-detail-container {
+  max-width: var(--width-container);
+  margin: 0 auto;
+  padding: var(--spacing-container);
+}
+
+/* Typography */
+.font-arabic {
+  font-family: var(--font-arabic);
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+  font-family: var(--font-arabic);
+}
+
+.subtitle {
+  color: var(--color-text-light);
+  font-size: 1rem;
+}
+
+.main-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+/* Home Page */
+.surah-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.surah-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: block;
+}
+
+.surah-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-primary);
+}
+
+.surah-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.surah-info-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.surah-number {
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.surah-card:hover .surah-number {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.surah-english-name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.surah-english-translation {
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.surah-info-right {
+  text-align: right;
+}
+
+.surah-arabic-name {
+  font-size: 1.25rem;
+  color: var(--color-text);
+  font-family: var(--font-arabic);
+  display: block;
+}
+
+.surah-verse-count {
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  margin: 0.25rem 0 0 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-text-light);
+}
+
+/* Surah Detail Page */
+.detail-header {
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 2rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.back-link:hover {
+  color: var(--color-primary);
+}
+
+.detail-title {
+  font-family: var(--font-arabic);
+  font-size: 3rem;
+  color: var(--color-primary);
+  margin: 0;
+  text-align: center;
+}
+
+.detail-subtitle {
+  text-align: center;
+  color: var(--color-text-light);
+  margin-top: 0.5rem;
+}
+
+.bismillah {
+  text-align: center;
+  font-family: var(--font-arabic);
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  color: var(--color-text);
+}
+
+.verse-container {
+  display: flex;
+  flex-direction: column-reverse;
+  /* Mobile first: actions below or inline? Let's use column-reverse or just block */
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+@media (min-width: 768px) {
+  .verse-container {
+    flex-direction: row;
+    gap: 2rem;
+  }
+}
+
+.verse-actions {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  /* Mobile: row */
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .verse-actions {
+    flex-direction: column;
+    margin-top: 0;
+    padding-top: 0.5rem;
+  }
+}
+
+.verse-number {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  background: var(--color-bg);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.play-button {
+  background: none;
+  border: 1px solid var(--color-border);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  transition: all 0.2s;
+}
+
+.play-button:hover,
+.play-button.playing {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.verse-content {
+  flex-grow: 1;
+}
+
+.arabic-text {
+  font-family: var(--font-arabic);
+  font-size: 2.2rem;
+  /* Large readable size */
+  line-height: 2.2;
+  text-align: right;
+  direction: rtl;
+  margin-bottom: 1.5rem;
+  color: var(--color-text);
+}
+
+.translation-text {
+  font-family: var(--font-latin);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--color-text-light);
+  text-align: left;
+  /* Albanian LTR */
+}
+
+/* Play All Button */
+.play-all-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.play-all-button:hover {
+  background-color: #059669;
+  /* Emerald 600 */
+  transform: translateY(-1px);
+}
+
+.play-all-button.active {
+  background-color: var(--color-secondary);
+}
+
+/* Highlighted Verse */
+.highlight-verse {
+  background-color: var(--color-primary-light);
+  border-radius: 12px;
+  margin: 0 -1rem;
+  padding: 2rem 1rem;
+  transition: background-color 0.5s ease;
+}
+
+/* Tajweed Rules Colors */
+
+/* Ghunnah (Green) */
+.tajweed-n {
+  color: #10B981;
+}
+
+/* Qalqalah (Blue/Light Blue) */
+.tajweed-p,
+.tajweed-k {
+  color: #3B82F6;
+}
+
+/* Iqlab (Cyan/Teal) */
+.tajweed-m {
+  color: #06B6D4;
+}
+
+/* Ikhfa (Red/Orange - often represented as gray or red) */
+.tajweed-q,
+.tajweed-f {
+  color: #F97316;
+  /* Orange for visibility */
+}
+
+/* Idgham (Gray/Mixed) */
+.tajweed-c,
+.tajweed-w {
+  color: #94A3B8;
+}
+
+/* Hamzat Wasl (Lighter gray) */
+.tajweed-h {
+  color: #CBD5E1;
+}
+
+/* Lam variations (Purple/Pink?) */
+.tajweed-l {
+  color: #A855F7;
+}
+
+/* Other General Tajweed Rules */
+.tajweed-g {
+  color: #10B981;
+}
+
+/* Audio Controls */
+.audio-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.repetition-select {
+  appearance: none;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  width: 100%;
+  max-width: 60px;
+}
+
+.repetition-select:hover,
+.repetition-select:focus {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  outline: none;
+}
+
+.repetition-counter {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.25rem;
+  white-space: nowrap;
+}
+
+/* Surah Repetition Controls */
+.surah-controls {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.surah-repetition-control {
+  background: var(--color-bg);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.surah-repetition-status {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reciter Selector */
+.reciter-selector-container {
+  display: flex;
+  justify-content: center;
+}
+
+.reciter-button {
+  background: white;
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.reciter-button:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.reciter-label {
+  color: var(--color-text-light);
+}
+
+.reciter-name {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.reciter-icon {
+  font-size: 0.7rem;
+  color: var(--color-text-light);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background: var(--color-card);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--color-text);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-text-light);
+  line-height: 1;
+}
+
+.close-button:hover {
+  color: var(--color-text);
+}
+
+.reciter-list {
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.reciter-item {
+  padding: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.reciter-item:hover {
+  background-color: var(--color-bg);
+}
+
+.reciter-item.selected {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.check-mark {
+  color: var(--color-primary);
+}
