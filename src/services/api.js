@@ -73,3 +73,32 @@ export const getSurahDetails = async (number, audioEdition = 'ar.alafasy', scrip
         return null;
     }
 };
+export const getPageDetails = async (pageNumber, audioEdition = 'ar.alafasy', scriptEdition = 'quran-tajweed') => {
+    try {
+        const response = await fetch(`${BASE_URL}/page/${pageNumber}/editions/${scriptEdition},${audioEdition},sq.ahmeti`);
+        const data = await response.json();
+
+        const quranData = data.data.find(d => d.edition.identifier === scriptEdition) || data.data[0];
+        const audioData = data.data.find(d => d.edition.format === 'audio') || data.data[1];
+        const translationData = data.data.find(d => d.edition.identifier === 'sq.ahmeti') || data.data[2];
+
+        const verses = quranData.ayahs.map((ayah, index) => ({
+            number: ayah.number,
+            numberInSurah: ayah.numberInSurah,
+            text: ayah.text,
+            audio: audioData.ayahs[index].audio,
+            translation: translationData.ayahs[index].text,
+            surah: ayah.surah,
+            juz: ayah.juz,
+            page: ayah.page,
+        }));
+
+        return {
+            page: pageNumber,
+            verses,
+        };
+    } catch (error) {
+        console.error(`Error fetching page ${pageNumber}:`, error);
+        return null;
+    }
+};

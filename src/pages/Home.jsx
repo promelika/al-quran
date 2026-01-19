@@ -79,7 +79,7 @@ const Home = () => {
                 <h1 className="title">Al-Quran</h1>
                 <p className="subtitle">Recitation & Translation</p>
 
-                <div className="reciter-selector-container" style={{ marginTop: '1rem', gap: '1rem' }}>
+                <div className="reciter-selector-container" style={{ marginTop: '1rem', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                     <button
                         className="reciter-button"
                         onClick={() => setShowReciterModal(true)}
@@ -97,6 +97,23 @@ const Home = () => {
                         <span className="reciter-name">{getScriptName(selectedScript)}</span>
                         <span className="reciter-icon">▼</span>
                     </button>
+
+                    <Link to="/mushaf" className="read-mushaf-button" style={{
+                        textDecoration: 'none',
+                        background: 'var(--color-primary)',
+                        color: 'white',
+                        padding: '0.6rem 1.2rem',
+                        borderRadius: '25px',
+                        fontWeight: '600',
+                        fontSize: '0.9rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        transition: 'all 0.2s',
+                        boxShadow: '0 4px 10px rgba(16, 185, 129, 0.3)'
+                    }}>
+                        📖 Lexo sipas Faqeve (1-604)
+                    </Link>
                 </div>
             </header>
 

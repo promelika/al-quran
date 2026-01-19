@@ -9,6 +9,8 @@ const SurahDetail = () => {
     const [loading, setLoading] = useState(true);
     const [playingAudio, setPlayingAudio] = useState(null);
     const [isPlayingAll, setIsPlayingAll] = useState(false);
+    const [showTranslation, setShowTranslation] = useState(true);
+    const [viewMode, setViewMode] = useState('list'); // 'list' or 'page'
 
     // State for repetition counts
     const [repetitionCounts, setRepetitionCounts] = useState({});
@@ -363,6 +365,44 @@ const SurahDetail = () => {
                                     <option value={2}>2x</option>
                                 </select>
                             </div>
+
+                            <div className="control-divider" style={{ width: '1px', height: '20px', background: 'var(--color-border)' }}></div>
+
+                            <button
+                                onClick={() => setShowTranslation(!showTranslation)}
+                                style={{
+                                    background: showTranslation ? 'var(--color-primary)' : 'var(--color-bg)',
+                                    color: showTranslation ? 'white' : 'var(--color-text)',
+                                    border: '1px solid var(--color-border)',
+                                    padding: '0.4rem 0.8rem',
+                                    borderRadius: '20px',
+                                    fontSize: '0.8rem',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                    fontWeight: '500'
+                                }}
+                            >
+                                {showTranslation ? 'Hide Translation' : 'Show Translation'}
+                            </button>
+
+                            <div className="control-divider" style={{ width: '1px', height: '20px', background: 'var(--color-border)' }}></div>
+
+                            <button
+                                onClick={() => setViewMode(viewMode === 'list' ? 'page' : 'list')}
+                                style={{
+                                    background: viewMode === 'page' ? 'var(--color-primary)' : 'var(--color-bg)',
+                                    color: viewMode === 'page' ? 'white' : 'var(--color-text)',
+                                    border: '1px solid var(--color-border)',
+                                    padding: '0.4rem 0.8rem',
+                                    borderRadius: '20px',
+                                    fontSize: '0.8rem',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                    fontWeight: '500'
+                                }}
+                            >
+                                {viewMode === 'page' ? 'List View' : 'Mus\'haf View'}
+                            </button>
                         </div>
 
                         {isPlayingAll && (surahRepetitionTarget > 1 || ayahRepetitionTarget > 1) && (
@@ -382,133 +422,157 @@ const SurahDetail = () => {
                 </div>
             </div>
 
-            <div className="verses-list">
+            <div className={`verses-list ${viewMode === 'page' ? 'mushaf-layout' : ''}`}>
                 <div className="bismillah">
                     بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
                 </div>
 
-                {surah.verses.map((verse) => (
-                    <div
-                        key={verse.number}
-                        className={`verse-container ${playingAudio === verse.audio ? 'highlight-verse' : ''}`}
-                        ref={el => verseRefs.current[verse.audio] = el}
-                    >
-                        <div className="verse-actions">
-                            <span className="verse-number">{verse.numberInSurah}</span>
-                            <div className="audio-controls">
-                                <button
-                                    className={`play-button ${playingAudio === verse.audio ? 'playing' : ''}`}
-                                    onClick={() => handlePlay(verse.audio)}
-                                >
-                                    {playingAudio === verse.audio ? '❚❚' : '▶'}
-                                </button>
+                {viewMode === 'list' ? (
+                    surah.verses.map((verse) => (
+                        <div
+                            key={verse.number}
+                            className={`verse-container ${playingAudio === verse.audio ? 'highlight-verse' : ''}`}
+                            ref={el => verseRefs.current[verse.audio] = el}
+                        >
+                            <div className="verse-actions">
+                                <span className="verse-number">{verse.numberInSurah}</span>
+                                <div className="audio-controls">
+                                    <button
+                                        className={`play-button ${playingAudio === verse.audio ? 'playing' : ''}`}
+                                        onClick={() => handlePlay(verse.audio)}
+                                    >
+                                        {playingAudio === verse.audio ? '❚❚' : '▶'}
+                                    </button>
 
-                                <div
-                                    className="learned-checkbox-container"
-                                    onClick={(e) => { e.stopPropagation(); toggleLearned(verse.numberInSurah); }}
-                                    title="Mark as learned"
-                                    style={{
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        marginTop: '0.25rem'
-                                    }}
-                                >
-                                    <div style={{
-                                        width: '20px',
-                                        height: '20px',
-                                        borderRadius: '4px',
-                                        border: '1px solid #000',
-                                        backgroundColor: learnedVerses[`${surah.number}:${verse.numberInSurah}`] ? 'var(--color-primary)' : 'transparent',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        transition: 'all 0.2s'
-                                    }}>
-                                        {learnedVerses[`${surah.number}:${verse.numberInSurah}`] && (
-                                            <span style={{ color: 'white', fontSize: '14px', lineHeight: 1 }}>✓</span>
+                                    <div
+                                        className="learned-checkbox-container"
+                                        onClick={(e) => { e.stopPropagation(); toggleLearned(verse.numberInSurah); }}
+                                        title="Mark as learned"
+                                        style={{
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginTop: '0.25rem'
+                                        }}
+                                    >
+                                        <div style={{
+                                            width: '20px',
+                                            height: '20px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #000',
+                                            backgroundColor: learnedVerses[`${surah.number}:${verse.numberInSurah}`] ? 'var(--color-primary)' : 'transparent',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.2s'
+                                        }}>
+                                            {learnedVerses[`${surah.number}:${verse.numberInSurah}`] && (
+                                                <span style={{ color: 'white', fontSize: '14px', lineHeight: 1 }}>✓</span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="recording-controls" style={{ display: 'flex', gap: '0.25rem', marginTop: '0.25rem', justifyContent: 'center' }}>
+                                        {!recordingVerse && !recordedAudio[`${surah.number}:${verse.numberInSurah}`] && (
+                                            <button
+                                                className="record-button"
+                                                onClick={(e) => { e.stopPropagation(); startRecording(`${surah.number}:${verse.numberInSurah}`); }}
+                                                title="Record your recitation"
+                                            >
+                                                🎤
+                                            </button>
+                                        )}
+
+                                        {recordingVerse === `${surah.number}:${verse.numberInSurah}` && (
+                                            <button
+                                                className="stop-button"
+                                                onClick={(e) => { e.stopPropagation(); stopRecording(); }}
+                                                title="Stop recording"
+                                            >
+                                                ⏹
+                                            </button>
+                                        )}
+
+                                        {recordedAudio[`${surah.number}:${verse.numberInSurah}`] && (
+                                            <>
+                                                <button
+                                                    className="play-recording-button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const audio = new Audio(recordedAudio[`${surah.number}:${verse.numberInSurah}`]);
+                                                        audio.play();
+                                                    }}
+                                                    title="Play your recording"
+                                                >
+                                                    👤▶
+                                                </button>
+                                                <button
+                                                    className="delete-recording-button"
+                                                    onClick={(e) => { e.stopPropagation(); deleteRecording(`${surah.number}:${verse.numberInSurah}`); }}
+                                                    title="Delete recording"
+                                                >
+                                                    🗑
+                                                </button>
+                                            </>
                                         )}
                                     </div>
-                                </div>
 
-                                <div className="recording-controls" style={{ display: 'flex', gap: '0.25rem', marginTop: '0.25rem', justifyContent: 'center' }}>
-                                    {!recordingVerse && !recordedAudio[`${surah.number}:${verse.numberInSurah}`] && (
-                                        <button
-                                            className="record-button"
-                                            onClick={(e) => { e.stopPropagation(); startRecording(`${surah.number}:${verse.numberInSurah}`); }}
-                                            title="Record your recitation"
-                                        >
-                                            🎤
-                                        </button>
-                                    )}
+                                    <select
+                                        className="repetition-select"
+                                        value={repetitionCounts[verse.audio] || 1}
+                                        onChange={(e) => setRepetitionCounts({
+                                            ...repetitionCounts,
+                                            [verse.audio]: parseInt(e.target.value)
+                                        })}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {repetitionOptions.map(num => (
+                                            <option key={num} value={num}>x{num}</option>
+                                        ))}
+                                    </select>
 
-                                    {recordingVerse === `${surah.number}:${verse.numberInSurah}` && (
-                                        <button
-                                            className="stop-button"
-                                            onClick={(e) => { e.stopPropagation(); stopRecording(); }}
-                                            title="Stop recording"
-                                        >
-                                            ⏹
-                                        </button>
-                                    )}
-
-                                    {recordedAudio[`${surah.number}:${verse.numberInSurah}`] && (
-                                        <>
-                                            <button
-                                                className="play-recording-button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    const audio = new Audio(recordedAudio[`${surah.number}:${verse.numberInSurah}`]);
-                                                    audio.play();
-                                                }}
-                                                title="Play your recording"
-                                            >
-                                                👤▶
-                                            </button>
-                                            <button
-                                                className="delete-recording-button"
-                                                onClick={(e) => { e.stopPropagation(); deleteRecording(`${surah.number}:${verse.numberInSurah}`); }}
-                                                title="Delete recording"
-                                            >
-                                                🗑
-                                            </button>
-                                        </>
+                                    {playingAudio === verse.audio && (repetitionCounts[verse.audio] || 1) > 1 && (
+                                        <div className="repetition-counter">
+                                            {repetitionProgress} / {repetitionCounts[verse.audio]}
+                                        </div>
                                     )}
                                 </div>
+                            </div>
 
-                                <select
-                                    className="repetition-select"
-                                    value={repetitionCounts[verse.audio] || 1}
-                                    onChange={(e) => setRepetitionCounts({
-                                        ...repetitionCounts,
-                                        [verse.audio]: parseInt(e.target.value)
-                                    })}
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    {repetitionOptions.map(num => (
-                                        <option key={num} value={num}>x{num}</option>
-                                    ))}
-                                </select>
-
-                                {playingAudio === verse.audio && (repetitionCounts[verse.audio] || 1) > 1 && (
-                                    <div className="repetition-counter">
-                                        {repetitionProgress} / {repetitionCounts[verse.audio]}
-                                    </div>
-                                )}
+                            <div className="verse-content">
+                                <p className="arabic-text">
+                                    {(!localStorage.getItem('selectedScript') || localStorage.getItem('selectedScript') === 'quran-tajweed')
+                                        ? parseTajweed(verse.text)
+                                        : verse.text}
+                                </p>
+                                {showTranslation && <p className="translation-text">{verse.translation}</p>}
                             </div>
                         </div>
-
-                        <div className="verse-content">
-                            <p className="arabic-text">
-                                {(!localStorage.getItem('selectedScript') || localStorage.getItem('selectedScript') === 'quran-tajweed')
-                                    ? parseTajweed(verse.text)
-                                    : verse.text}
-                            </p>
-                            <p className="translation-text">{verse.translation}</p>
-                        </div>
+                    ))
+                ) : (
+                    <div className="mushaf-container">
+                        {surah.verses.map((verse) => (
+                            <span
+                                key={verse.number}
+                                className={`mushaf-verse ${playingAudio === verse.audio ? 'highlight-text' : ''}`}
+                                onClick={() => handlePlay(verse.audio)}
+                                ref={el => verseRefs.current[verse.audio] = el}
+                            >
+                                <span className="mushaf-arabic">
+                                    {(!localStorage.getItem('selectedScript') || localStorage.getItem('selectedScript') === 'quran-tajweed')
+                                        ? parseTajweed(verse.text)
+                                        : verse.text}
+                                </span>
+                                <span className="verse-separator">
+                                    <span className="separator-square">
+                                        {verse.numberInSurah.toLocaleString('ar-EG')}
+                                    </span>
+                                </span>
+                            </span>
+                        ))}
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );
