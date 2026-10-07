@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Scheherazade+New:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
 /* Global CSS Reset & Variables */
 :root {
   --color-primary: #10B981;
@@ -15,7 +17,7 @@
   /* Slate 500 */
   --color-border: #e2e8f0;
   /* Slate 200 */
-  --font-arabic: 'Amiri', serif;
+  --font-arabic: 'Amiri Quran', 'Amiri', 'Scheherazade New', 'Traditional Arabic', serif;
   --font-latin: 'Inter', sans-serif;
   --spacing-container: 2rem;
   --width-container: 1200px;
@@ -303,9 +305,30 @@ a {
   /* Large readable size */
   line-height: 2.2;
   text-align: right;
-  direction: rtl;
+  direction: rtl !important;
+  unicode-bidi: isolate;
   margin-bottom: 1.5rem;
   color: var(--color-text);
+}
+
+.mushaf-arabic {
+  font-family: var(--font-arabic);
+  font-size: 2.4rem;
+  /* Larger font for page reading */
+  margin-left: 0.5rem;
+  color: var(--color-text);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  direction: rtl !important;
+  unicode-bidi: isolate;
+  display: inline;
+}
+
+.arabic-text span,
+.mushaf-arabic span,
+.tanzil-arabic span {
+  direction: rtl !important;
+  unicode-bidi: isolate;
+  font-family: inherit;
 }
 
 .translation-text {

@@ -31,7 +31,7 @@ const parseTajweed = (text) => {
     while ((match = regex.exec(text)) !== null) {
         // Add text before the match
         if (match.index > currentIndex) {
-            parts.push(<span key={currentIndex}>{text.substring(currentIndex, match.index)}</span>);
+            parts.push(<span key={currentIndex} dir="rtl">{text.substring(currentIndex, match.index)}</span>);
         }
 
         const rule = match[1];
@@ -39,7 +39,7 @@ const parseTajweed = (text) => {
         const className = `tajweed-${rule.split(':')[0]}`; // handle h:1 as tajweed-h
 
         parts.push(
-            <span key={match.index} className={className}>
+            <span key={match.index} className={className} dir="rtl">
                 {content}
             </span>
         );
@@ -49,7 +49,7 @@ const parseTajweed = (text) => {
 
     // Add remaining text
     if (currentIndex < text.length) {
-        parts.push(<span key={currentIndex}>{text.substring(currentIndex)}</span>);
+        parts.push(<span key={currentIndex} dir="rtl">{text.substring(currentIndex)}</span>);
     }
 
     return parts;
