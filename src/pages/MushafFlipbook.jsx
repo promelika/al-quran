@@ -4,6 +4,41 @@ import HTMLFlipBook from 'react-pageflip';
 import { getPageDetails } from '../services/api';
 import parseTajweed from '../utils/tajweedParser';
 
+const CoverPage = React.forwardRef((props, ref) => {
+    return (
+        <div className="page mushaf-cover-flip" ref={ref} data-density="hard">
+            <div className="cover-content">
+                <div className="cover-outer-border">
+                    <div className="cover-inner-border">
+                        <div className="cover-header-ornament">❖ ❖ ❖</div>
+
+                        <div className="cover-center-block">
+                            <div className="cover-main-title">
+                                الْقُرْآنُ الْكَرِيمُ
+                            </div>
+
+                            <div className="cover-sub-title">
+                                KUR'ANI FISNIK
+                            </div>
+
+                            <div className="cover-emblem">
+                                <div className="emblem-star">۝</div>
+                            </div>
+                        </div>
+
+                        <div className="cover-footer-block">
+                            <div className="cover-footer-text">
+                                MUSHAF-I MADHËRUAR
+                            </div>
+                            <div className="cover-footer-ornament">❖ ❖ ❖</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+});
+
 const Page = React.forwardRef((props, ref) => {
     const { pageData, playingAudio, handlePlay, fontSize } = props;
 
@@ -59,7 +94,7 @@ const MushafFlipbook = () => {
     const [pages, setPages] = useState({}); // { pageNumber: data }
     const [loading, setLoading] = useState(true);
     const [playingAudio, setPlayingAudio] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(0); // 0 is cover
     const [dimensions, setDimensions] = useState({ width: 550, height: 733 });
     const [zoomScale, setZoomScale] = useState(1.0);
 
@@ -113,11 +148,13 @@ const MushafFlipbook = () => {
     }, []);
 
     const onFlip = (e) => {
-        const newPage = e.data + 1;
-        setCurrentPage(newPage);
-        // Pre-fetch next pages
-        fetchPage(newPage + 1);
-        fetchPage(newPage + 2);
+        const pageIndex = e.data; // 0 = Cover, 1 = Page 1, 2 = Page 2...
+        setCurrentPage(pageIndex);
+        if (pageIndex > 0) {
+            fetchPage(pageIndex);
+            fetchPage(pageIndex + 1);
+            fetchPage(pageIndex + 2);
+        }
     };
 
     const handlePlay = (audioUrl) => {
@@ -155,7 +192,7 @@ const MushafFlipbook = () => {
 
                 <div className="flipbook-controls">
                     <button onClick={() => flipBook.current?.pageFlip().flipNext()} className="nav-button">Para</button>
-                    <span className="page-info">Faqja {currentPage} / 604</span>
+                    <span className="page-info">{currentPage === 0 ? 'Kopertina' : `Faqja ${currentPage} / 604`}</span>
                     <button onClick={() => flipBook.current?.pageFlip().flipPrev()} className="nav-button">Tjetra</button>
                 </div>
             </header>
@@ -170,14 +207,15 @@ const MushafFlipbook = () => {
                     maxWidth={2000}
                     minHeight={260}
                     maxHeight={2600}
-                    maxShadowOpacity={0.5}
+                    maxShadowOpacity={0.6}
                     showCover={true}
                     className="mushaf-flip-book"
                     onFlip={onFlip}
                     ref={flipBook}
                     useMouseEvents={true}
-                    startPage={currentPage > 0 ? currentPage - 1 : 0}
+                    startPage={currentPage}
                 >
+                    <CoverPage key="cover-page" />
                     {pageArray.map((num) => (
                         <Page
                             key={num}
