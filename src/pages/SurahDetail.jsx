@@ -10,7 +10,7 @@ const SurahDetail = () => {
     const [playingAudio, setPlayingAudio] = useState(null);
     const [isPlayingAll, setIsPlayingAll] = useState(false);
     const [showTranslation, setShowTranslation] = useState(true);
-    const [viewMode, setViewMode] = useState('list'); // 'list' or 'page'
+    const [viewMode, setViewMode] = useState('list'); // 'list', 'page', or 'tanzil'
 
     // State for repetition counts
     const [repetitionCounts, setRepetitionCounts] = useState({});
@@ -388,10 +388,14 @@ const SurahDetail = () => {
                             <div className="control-divider" style={{ width: '1px', height: '20px', background: 'var(--color-border)' }}></div>
 
                             <button
-                                onClick={() => setViewMode(viewMode === 'list' ? 'page' : 'list')}
+                                onClick={() => {
+                                    if (viewMode === 'list') setViewMode('page');
+                                    else if (viewMode === 'page') setViewMode('tanzil');
+                                    else setViewMode('list');
+                                }}
                                 style={{
-                                    background: viewMode === 'page' ? 'var(--color-primary)' : 'var(--color-bg)',
-                                    color: viewMode === 'page' ? 'white' : 'var(--color-text)',
+                                    background: (viewMode === 'page' || viewMode === 'tanzil') ? 'var(--color-primary)' : 'var(--color-bg)',
+                                    color: (viewMode === 'page' || viewMode === 'tanzil') ? 'white' : 'var(--color-text)',
                                     border: '1px solid var(--color-border)',
                                     padding: '0.4rem 0.8rem',
                                     borderRadius: '20px',
@@ -401,7 +405,7 @@ const SurahDetail = () => {
                                     fontWeight: '500'
                                 }}
                             >
-                                {viewMode === 'page' ? 'List View' : 'Mus\'haf View'}
+                                {viewMode === 'list' ? 'Mus\'haf View' : viewMode === 'page' ? 'Tanzil View' : 'List View'}
                             </button>
                         </div>
 
@@ -550,7 +554,7 @@ const SurahDetail = () => {
                             </div>
                         </div>
                     ))
-                ) : (
+                ) : viewMode === 'page' ? (
                     <div className="mushaf-container">
                         {surah.verses.map((verse) => (
                             <span
@@ -571,6 +575,56 @@ const SurahDetail = () => {
                                 </span>
                             </span>
                         ))}
+                    </div>
+                ) : (
+                    <div className="tanzil-view-container">
+                        <div className="tanzil-sidebar">
+                            <h3>Tanzil Control</h3>
+                            <div className="sidebar-group">
+                                <label>Recitation</label>
+                                <button className={`play-all-button ${isPlayingAll ? 'active' : ''}`} onClick={handlePlayAll}>
+                                    {isPlayingAll ? 'Pause' : 'Play All'}
+                                </button>
+                            </div>
+                            <div className="sidebar-group">
+                                <label>Translation</label>
+                                <div className="toggle-switch" onClick={() => setShowTranslation(!showTranslation)}>
+                                    <div className={`switch ${showTranslation ? 'on' : 'off'}`}></div>
+                                    <span>{showTranslation ? 'On' : 'Off'}</span>
+                                </div>
+                            </div>
+                            <div className="sidebar-group">
+                                <label>Speed</label>
+                                <select className="sidebar-select" value={playbackSpeed} onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}>
+                                    <option value={0.5}>0.5x</option>
+                                    <option value={1}>1.0x</option>
+                                    <option value={1.5}>1.5x</option>
+                                    <option value={2}>2.0x</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="tanzil-content">
+                            {surah.verses.map((verse) => (
+                                <div
+                                    key={verse.number}
+                                    className={`tanzil-row ${playingAudio === verse.audio ? 'highlight-tanzil' : ''}`}
+                                    onClick={() => handlePlay(verse.audio)}
+                                    ref={el => verseRefs.current[verse.audio] = el}
+                                >
+                                    <div className="tanzil-arabic">
+                                        {(!localStorage.getItem('selectedScript') || localStorage.getItem('selectedScript') === 'quran-tajweed')
+                                            ? parseTajweed(verse.text)
+                                            : verse.text}
+                                        <span className="tanzil-number">({verse.numberInSurah})</span>
+                                    </div>
+                                    {showTranslation && (
+                                        <div className="tanzil-translation">
+                                            {verse.translation}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )}
             </div>

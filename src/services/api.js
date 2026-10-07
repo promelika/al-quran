@@ -75,19 +75,30 @@ export const getSurahDetails = async (number, audioEdition = 'ar.alafasy', scrip
 };
 export const getPageDetails = async (pageNumber, audioEdition = 'ar.alafasy', scriptEdition = 'quran-tajweed') => {
     try {
-        const response = await fetch(`${BASE_URL}/page/${pageNumber}/editions/${scriptEdition},${audioEdition},sq.ahmeti`);
-        const data = await response.json();
+        const [quranRes, audioRes, transRes] = await Promise.all([
+            fetch(`${BASE_URL}/page/${pageNumber}/${scriptEdition}`),
+            fetch(`${BASE_URL}/page/${pageNumber}/${audioEdition}`),
+            fetch(`${BASE_URL}/page/${pageNumber}/sq.ahmeti`)
+        ]);
 
-        const quranData = data.data.find(d => d.edition.identifier === scriptEdition) || data.data[0];
-        const audioData = data.data.find(d => d.edition.format === 'audio') || data.data[1];
-        const translationData = data.data.find(d => d.edition.identifier === 'sq.ahmeti') || data.data[2];
+        const [quranJson, audioJson, transJson] = await Promise.all([
+            quranRes.json(),
+            audioRes.json(),
+            transRes.json()
+        ]);
+
+        const quranData = quranJson.data;
+        const audioData = audioJson.data;
+        const translationData = transJson.data;
+
+        if (!quranData || !quranData.ayahs) return null;
 
         const verses = quranData.ayahs.map((ayah, index) => ({
             number: ayah.number,
             numberInSurah: ayah.numberInSurah,
             text: ayah.text,
-            audio: audioData.ayahs[index].audio,
-            translation: translationData.ayahs[index].text,
+            audio: audioData?.ayahs?.[index]?.audio || '',
+            translation: translationData?.ayahs?.[index]?.text || '',
             surah: ayah.surah,
             juz: ayah.juz,
             page: ayah.page,

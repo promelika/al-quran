@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getPageDetails } from '../services/api';
+import parseTajweed from '../utils/tajweedParser';
 
 const MushafPage = () => {
     const { pageNumber } = useParams();
@@ -9,9 +10,14 @@ const MushafPage = () => {
     const [loading, setLoading] = useState(true);
     const [playingAudio, setPlayingAudio] = useState(null);
     const [playbackSpeed, setPlaybackSpeed] = useState(1);
+    const [fontSize, setFontSize] = useState(2.2);
 
     const audioRef = useRef(new Audio());
     const verseRefs = useRef({});
+
+    const handleZoomIn = () => setFontSize(prev => Math.min(prev + 0.2, 4.0));
+    const handleZoomOut = () => setFontSize(prev => Math.max(prev - 0.2, 1.2));
+    const handleResetZoom = () => setFontSize(2.2);
 
     useEffect(() => {
         const fetchPage = async () => {
@@ -45,22 +51,6 @@ const MushafPage = () => {
         }
     };
 
-    const parseTajweed = (text) => {
-        if (!text) return '';
-        return text.split(/\[|\]/).map((part, index) => {
-            if (index % 2 === 1) {
-                const [colorCode, ...content] = part.split(':');
-                const colors = {
-                    '#FF0000': '#ef4444',
-                    '#008000': '#10b981',
-                    '#0000FF': '#3b82f6',
-                };
-                return <span key={index} style={{ color: colors[`#${colorCode}`] || 'inherit' }}>{content.join(':')}</span>;
-            }
-            return part;
-        });
-    };
-
     if (loading) {
         return (
             <div className="loading-container">
@@ -80,6 +70,15 @@ const MushafPage = () => {
             <header className="detail-header scrolled">
                 <div className="header-top">
                     <Link to="/" className="back-link">← Ballina</Link>
+
+                    <div className="zoom-controls">
+                        <span className="zoom-label">Zmadhimi:</span>
+                        <button onClick={handleZoomOut} title="Zvogëlo tekstin" className="zoom-btn">-</button>
+                        <span className="zoom-value">{Math.round((fontSize / 2.2) * 100)}%</span>
+                        <button onClick={handleZoomIn} title="Rrite tekstin" className="zoom-btn">+</button>
+                        <button onClick={handleResetZoom} title="Rikthe madhësinë" className="zoom-reset-btn">↺</button>
+                    </div>
+
                     <div className="page-navigation-controls" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <button
                             disabled={currentPage <= 1}
@@ -143,7 +142,7 @@ const MushafPage = () => {
                                     Sura {verse.surah.name}
                                 </div>
                             )}
-                            <span className="mushaf-arabic">
+                            <span className="mushaf-arabic" style={{ fontSize: `${fontSize}rem` }}>
                                 {(!localStorage.getItem('selectedScript') || localStorage.getItem('selectedScript') === 'quran-tajweed')
                                     ? parseTajweed(verse.text)
                                     : verse.text}
