@@ -908,7 +908,6 @@ a {
   padding: 2.5rem 1.5rem;
   display: flex;
   flex-direction: column;
-  transform: scaleX(-1);
 }
 
 .page-header {
@@ -1033,7 +1032,6 @@ a {
 
 .mushaf-flip-book {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  transform: scaleX(-1);
 }
 
 /* Responsiveness for Flipbook */
