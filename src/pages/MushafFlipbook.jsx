@@ -171,7 +171,7 @@ const MushafFlipbook = () => {
                     minHeight={260}
                     maxHeight={2600}
                     maxShadowOpacity={0.5}
-                    showCover={false}
+                    showCover={true}
                     className="mushaf-flip-book"
                     onFlip={onFlip}
                     ref={flipBook}
