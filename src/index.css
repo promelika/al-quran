@@ -667,3 +667,516 @@ a {
     transform: scale(1);
   }
 }
+
+/* Mus'haf (Page) View Styles */
+.mushaf-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  direction: rtl;
+  text-align: justify;
+  line-height: 3.2;
+  font-family: 'Amiri', serif;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mushaf-verse {
+  display: inline;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  position: relative;
+}
+
+.mushaf-verse:hover {
+  background-color: var(--color-primary-light);
+}
+
+.mushaf-verse.highlight-text {
+  background-color: #fef08a;
+  /* Soft yellow for highlighting flowing text */
+  box-shadow: 0 0 12px rgba(253, 224, 71, 0.6);
+}
+
+.mushaf-arabic {
+  font-size: 2.4rem;
+  /* Larger font for page reading */
+  margin-left: 0.5rem;
+  color: var(--color-text);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.verse-separator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1rem;
+  vertical-align: middle;
+}
+
+.separator-square {
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  /* Traditional circle marker */
+  font-size: 1rem;
+  font-weight: 700;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Adjustments for page view layout in list container */
+.verses-list.mushaf-layout {
+  padding: 3rem 0;
+  background: none;
+}
+
+.verses-list.mushaf-layout .bismillah {
+  font-size: 3rem;
+  margin-bottom: 4rem;
+  color: var(--color-primary);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Page Navigation Styles */
+.page-navigation-controls {
+  background: white;
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.nav-button:hover:not(:disabled) {
+  background: var(--color-primary-light);
+}
+
+.nav-button:disabled {
+  color: var(--color-text-light);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.current-page-display {
+  font-weight: 700;
+  color: var(--color-text);
+  min-width: 100px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.read-mushaf-button {
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+}
+
+.read-mushaf-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+}
+
+.surah-start-marker {
+  font-family: 'Amiri', serif;
+  border-bottom: 2px solid var(--color-primary);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.surah-title-compact {
+  color: var(--color-primary);
+  font-size: 1.4rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.compact-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 0.5rem;
+}
+
+/* Flipbook Styles */
+.flipbook-page-container {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flipbook-header {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.flipbook-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--color-primary-light);
+  padding: 0.5rem 1.5rem;
+  border-radius: 30px;
+}
+
+.page-info {
+  font-weight: 700;
+  color: var(--color-primary);
+  min-width: 120px;
+  text-align: center;
+}
+
+.flipbook-wrapper {
+  padding: 2.5rem 1rem;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: #e5e7eb;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.mushaf-page-flip {
+  background-color: #fdfcf0;
+  /* Creamy paper color */
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.05);
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.mushaf-page-flip .page-content {
+  height: 100%;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transform: scaleX(-1);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.page-number-top {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.flipbook-container {
+  box-shadow: none;
+  background: transparent;
+  padding: 0.5rem;
+  max-width: 100%;
+  border: none;
+  backdrop-filter: none;
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(100% - 40px);
+}
+
+/* Custom Scrollbars */
+.flipbook-container::-webkit-scrollbar,
+.mushaf-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.flipbook-container::-webkit-scrollbar-track,
+.mushaf-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+}
+
+.flipbook-container::-webkit-scrollbar-thumb,
+.mushaf-container::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+/* Zoom Controls */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: white;
+  padding: 0.35rem 0.75rem;
+  border-radius: 30px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.zoom-label {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  font-weight: 500;
+}
+
+.zoom-btn {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-primary);
+  transition: all 0.2s;
+}
+
+.zoom-btn:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.zoom-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  min-width: 45px;
+  text-align: center;
+}
+
+.zoom-reset-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text-light);
+  padding: 0 0.25rem;
+  transition: color 0.2s;
+}
+
+.zoom-reset-btn:hover {
+  color: var(--color-primary);
+}
+
+.flipbook-marker {
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  margin: 1rem 0;
+}
+
+.loading-page {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.mushaf-flip-book {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  transform: scaleX(-1);
+}
+
+/* Responsiveness for Flipbook */
+@media (max-width: 768px) {
+  .flipbook-header {
+    padding: 1rem;
+  }
+}
+
+/* Tanzil Style Layout */
+.tanzil-view-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #fafafa;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.tanzil-sidebar {
+  width: 250px;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: fit-content;
+  position: sticky;
+  top: 120px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.tanzil-sidebar h3 {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+.sidebar-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-group label {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  font-weight: 600;
+}
+
+.sidebar-select {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: white;
+  font-size: 0.9rem;
+}
+
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.switch {
+  width: 40px;
+  height: 20px;
+  background: #e5e7eb;
+  border-radius: 20px;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.switch.on {
+  background: var(--color-primary);
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: left 0.2s;
+}
+
+.switch.on::after {
+  left: 22px;
+}
+
+.tanzil-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 900px;
+}
+
+.tanzil-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s;
+  cursor: pointer;
+  align-items: start;
+}
+
+.tanzil-row:hover {
+  background-color: #f3f4f6;
+}
+
+.highlight-tanzil {
+  background-color: #fef9c3 !important;
+  /* Soft yellow highlight */
+  border-right: 4px solid var(--color-primary);
+}
+
+.tanzil-arabic {
+  direction: rtl;
+  font-family: 'Amiri', serif;
+  font-size: 1.8rem;
+  line-height: 1.8;
+  color: var(--color-text);
+  padding-left: 2rem;
+}
+
+.tanzil-number {
+  font-size: 1rem;
+  color: var(--color-primary);
+  margin-right: 0.5rem;
+  font-weight: 700;
+}
+
+.tanzil-translation {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4b5563;
+  padding-right: 2rem;
+  border-right: 1px solid #eee;
+}
+
+/* Response for Tanzil View */
+@media (max-width: 1024px) {
+  .tanzil-view-container {
+    flex-direction: column;
+  }
+
+  .tanzil-sidebar {
+    width: 100%;
+    position: static;
+  }
+
+  .tanzil-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .tanzil-translation {
+    border-right: none;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+  }
+}

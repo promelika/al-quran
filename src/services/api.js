@@ -73,3 +73,43 @@ export const getSurahDetails = async (number, audioEdition = 'ar.alafasy', scrip
         return null;
     }
 };
+export const getPageDetails = async (pageNumber, audioEdition = 'ar.alafasy', scriptEdition = 'quran-tajweed') => {
+    try {
+        const [quranRes, audioRes, transRes] = await Promise.all([
+            fetch(`${BASE_URL}/page/${pageNumber}/${scriptEdition}`),
+            fetch(`${BASE_URL}/page/${pageNumber}/${audioEdition}`),
+            fetch(`${BASE_URL}/page/${pageNumber}/sq.ahmeti`)
+        ]);
+
+        const [quranJson, audioJson, transJson] = await Promise.all([
+            quranRes.json(),
+            audioRes.json(),
+            transRes.json()
+        ]);
+
+        const quranData = quranJson.data;
+        const audioData = audioJson.data;
+        const translationData = transJson.data;
+
+        if (!quranData || !quranData.ayahs) return null;
+
+        const verses = quranData.ayahs.map((ayah, index) => ({
+            number: ayah.number,
+            numberInSurah: ayah.numberInSurah,
+            text: ayah.text,
+            audio: audioData?.ayahs?.[index]?.audio || '',
+            translation: translationData?.ayahs?.[index]?.text || '',
+            surah: ayah.surah,
+            juz: ayah.juz,
+            page: ayah.page,
+        }));
+
+        return {
+            page: pageNumber,
+            verses,
+        };
+    } catch (error) {
+        console.error(`Error fetching page ${pageNumber}:`, error);
+        return null;
+    }
+};
